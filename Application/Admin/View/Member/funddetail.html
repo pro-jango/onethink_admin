@@ -1,0 +1,83 @@
+<extend name="Public/base"/>
+
+<block name="body">
+	<!-- 标题栏 -->
+	<div class="main-title">
+		<h2>用户资金明细</h2>
+	</div>
+	<div class="cf">
+		<!-- 高级搜索 -->
+		<div class="search-form cf">
+			<div>
+				用户名：
+        		<input type="text" name="username" class="text input-2x" value="{:I('username')}" placeholder="用户名" />
+                <!-- <button class="btn" url="{:U('member/index','pid='.I('pid',0).'&cate_id='.$cate_id,false)}" id="search">搜 索</button> -->
+                <button class="btn" url="{:U('member/funddetail')}" id="search">搜 索</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 数据列表 -->
+	<div class="data-table">
+        <div class="data-table table-striped">
+	<table class="">
+    <thead>
+        <tr>
+		<th class="">编号</th>
+		<th class="">用户名称</th>
+		<th class="">变动来源</th>
+		<th class="">资金变动</th>
+		<th class="">余额</th>
+		<th class="">变动时间</th>
+		</tr>
+    </thead>
+    <tbody>
+		<notempty name="list_data">
+		<volist name="list_data" id="vo">
+		<tr>
+			<td>{$vo.id}</td>
+			<td>{$vo.userid|funs_get_username}</td>
+			<td>{$vo.referfrom}</td>
+			<td><span>{$vo.change|funs_get_money}元</span></td>
+			<td><span>{$vo.balance|funs_get_money}元</span></td>
+			<td><span>{$vo.addtime|time_format}</span></td>
+		</tr>
+		</volist>
+		<else/>
+		<td colspan="8" class="text-center"> aOh! 暂时还没有内容! </td>
+		</notempty>
+	</tbody>
+    </table>
+        </div>
+    </div>
+    <div class="page">
+        {$_page}
+    </div>
+</block>
+<block name="script">
+<script src="__STATIC__/thinkbox/jquery.thinkbox.js"></script>
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript">
+  	//导航高亮
+highlight_subnav('{:U('Model/index')}');
+$(function(){
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+        var query  = $('.search-form').find('input').serialize();
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+    });
+})
+</script>
+</block>

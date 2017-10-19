@@ -1,0 +1,31 @@
+<div class="span">
+	<div class="columns-mod">
+		<div class="hd cf">
+			<h5>站点统计总览</h5>
+			<div class="title-opt">
+			</div>
+		</div>
+		<div class="bd">
+			<div class="sys-info">
+				<table>
+					<tr>
+						<th width="40%">今日注册人数：{$info.userToday}</th>
+						<th>历史注册人数：{$info.userTotal}</th>
+					</tr>
+					<tr>
+						<th>今日支付次数：{$info.payToday}</th>
+						<th>历史支付次数：{$info.payTotal}</th>
+					</tr>
+					<tr>
+						<th>今日租书次数：{$info.orderToday}</th>
+						<th>历史租书次数：{$info.orderTotal}</th>
+					</tr>
+					<tr>
+						<th>待确认订单：<a href="{:U('Order/index')}">{$info.orderConfirm}个</a></th>
+						<th>待发货订单：<a href="{:U('Order/waitingList')}">{$info.orderWaiting}个</a></th>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

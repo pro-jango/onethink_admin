@@ -1,0 +1,142 @@
+<extend name="Public/base" />
+
+<block name="body">
+<script type="text/javascript" src="__STATIC__/uploadify/jquery.uploadify.min.js"></script>
+    <div class="main-title cf">
+        <h2>{$config.title}</h2>
+    </div>
+    <!-- 标签页导航 -->
+<div class="tab-wrap">
+    <div class="tab-content">
+    <!-- 表单 -->
+    <form id="form" action="{$config.url}" method="post" class="form-horizontal">
+        <!-- 基础文档模型 -->
+        <div id="tab0" class="tab-pane in tab0">
+            <volist name="fields" id="field">
+                <div class="form-item cf">
+                    <label class="item-label">{$field['title']}<span class="check-tips"><notempty name="field['remark']">（{$field['remark']}）</notempty></span></label>
+                    <div class="controls">
+                        <switch name="field.type">
+                            <case value="span">
+                                {$field.data}
+                            </case>
+                            <case value="num">
+                                <input type="text" class="text input-mid" name="{$field.name}" value="{$data[$field['name']]}">
+                            </case>
+                            <case value="string">
+                                <input type="text" class="text input-large" name="{$field.name}" value="{$data[$field['name']]}">
+                            </case>
+                            <case value="textarea">
+                                <label class="textarea input-large">
+                                <textarea name="{$field.name}">{$data[$field['name']]}</textarea>
+                                </label>
+                            </case>
+                            <case value="date">
+                                <input type="text" name="{$field.name}" class="text input-mid date" value="{$data[$field['name']]}" placeholder="请选择日期" />
+                            </case>
+                            <case value="datetime">
+                                <input type="text" name="{$field.name}" class="text input-mid time" value="{$data[$field['name']]}" placeholder="请选择时间" />
+                            </case>
+                            <case value="bool">
+                                <select name="{$field.name}">
+                                    <volist name=":parse_field_attr($field['extra'])" id="vo">
+                                        <option value="{$key}" <eq name="data[$field['name']]" value="$key">selected</eq>>{$vo}</option>
+                                    </volist>
+                                </select>
+                            </case>
+                            <case value="select">
+                                <select name="{$field.name}">
+                                    <volist name=":parse_field_attr($field['extra'])" id="vo">
+                                        <option value="{$key}" <eq name="data[$field['name']]" value="$key">selected</eq>>{$vo}</option>
+                                    </volist>
+                                </select>
+                            </case>
+                            <case value="select_array">
+                                <select name="{$field.name}">
+                                    <volist name="field['data']" id="vo">
+                                        <option value="{$key}" <eq name="data[$field['name']]" value="$key">selected</eq>>{$vo}</option>
+                                    </volist>
+                                </select>
+                            </case>
+
+                            <case value="select_color">
+                                <select name="{$field.name}">
+                                    <volist name="field['data']" id="vo">
+                                        <option style="color:{$vo};" value="{$key}" <eq name="data[$field['name']]" value="$key">selected</eq>>{$vo}</option>
+                                    </volist>
+                                </select>
+                            </case>
+
+                            <case value="radio">
+                                <volist name=":parse_field_attr($field['extra'])" id="vo">
+                                    <label class="radio">
+                                    <input type="radio" value="{$key}" name="{$field.name}" <eq name="data[$field['name']]" value="$key">checked="checked"</eq>>{$vo}
+                                    </label>
+                                </volist>
+                            </case>
+                            <case value="checkbox">
+                                <volist name=":parse_field_attr($field['extra'])" id="vo">
+                                    <label class="checkbox">
+                                    <input type="checkbox" value="{$key}" name="{$field.name}[]" <in name="key" value="$data[$field['name']]" >checked="checked"</in>>{$vo}
+                                    </label>
+                                </volist>
+                            </case>
+                            <case value="editor">
+                                <label class="textarea">
+                                <textarea name="{$field.name}">{$data[$field['name']]}</textarea>
+                                {:hook('adminArticleEdit', array('name'=>$field['name'],'value'=>$data[$field['name']]))}
+                                </label>
+                            </case>
+
+                            <case value="picture">
+                                <div class="controls">
+                                    <input type="text" class="text input-large" name="{$field.name}" value="{$data[$field['name']]}"><a href="javascript:;" class="btn" name="image_select">选择图片</a>
+                                    <div class="upload-pre-item"><img src="{$data[$field['name']]}"/></div>
+                                </div>
+                            </case>
+                            
+                            <default/>
+                            <input type="text" class="text input-large" name="{$field.name}" value="{$data[$field['name']]}">
+                        </switch>
+                    </div>
+                </div>
+            </volist>
+
+            <div class="form-item cf">
+                <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">保 存</button>
+                <a class="btn btn-return" href="javascript:;" onclick="javascript:history.back(-1);return false;">返 回</a>
+            </div>
+    </form>
+    </div>
+</div>
+</block>
+
+<block name="script">
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript">
+$('#submit').click(function(){
+    $('#form').submit();
+});
+
+$(function(){
+    $('.date').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true
+    });
+    $('.time').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        language:"zh-CN",
+        minView:2,
+        autoclose:true
+    });
+    showTab();
+
+});
+</script>
+</block>

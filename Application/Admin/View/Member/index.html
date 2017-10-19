@@ -1,0 +1,124 @@
+<extend name="Public/base"/>
+
+<block name="body">
+	<!-- 标题栏 -->
+	<div class="main-title">
+		<h2>用户列表</h2>
+
+	</div>
+	<!-- 按钮工具栏 -->
+	<!-- <div class="cf" style="margin-bottom: 8px;">
+		<button class="btn ajax-post" target-form="ids" url="{:U("Article/setStatus",array("status"=>1))}">启 用</button>
+		<button class="btn ajax-post" target-form="ids" url="{:U("Article/setStatus",array("status"=>0))}">禁 用</button>
+		<button class="btn ajax-post confirm" target-form="ids" url="{:U("Article/setStatus",array("status"=>-1))}">删 除</button>
+		<br/>
+	</div> -->
+	<!-- 按钮工具栏 -->
+	<div class="cf">
+		<!-- 高级搜索 -->
+		<div class="search-form cf">
+			<div>
+				用户名：
+        		<input type="text" name="username" class="text input-2x" value="{:I('username')}" placeholder="用户名" />
+				
+				手机号码：
+        		<input type="text" name="mobile" class="text input-2x" value="{:I('mobile')}" placeholder="手机号码" />
+
+				注册时间：
+        		<input type="text" id="reg-start" name="reg-start" class="text input-2x" value="{:I('reg-start')}" placeholder="起始时间" /> -   
+				<input type="text" id="reg-end" name="reg-end" class="text input-2x" value="{:I('reg-end')}" placeholder="结束时间" />
+
+				最后登录：
+        		<input type="text" id="lastlogin-start" name="lastlogin-start" class="text input-2x" value="{:I('lastlogin-start')}" placeholder="起始时间" /> -   
+				<input type="text" id="lastlogin-end" name="lastlogin-end" class="text input-2x" value="{:I('lastlogin-end')}" placeholder="结束时间" />
+                <!-- <button class="btn" url="{:U('member/index','pid='.I('pid',0).'&cate_id='.$cate_id,false)}" id="search">搜 索</button> -->
+                <button class="btn" url="{:U('member/index')}" id="search">搜 索</button>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 数据列表 -->
+	<div class="data-table">
+        <div class="data-table table-striped">
+	<table class="">
+    <thead>
+        <tr>
+		<th class="">编号</th>
+		<th class="">头像</th>
+		<th class="">用户名称</th>
+		<th class="">手机号码</th>
+		<th class="">注册时间</th>
+		<th class="">最后登录</th>
+		<th class="">注册渠道</th>
+		<th class="">渠道信息</th>
+		<th class="">可用状态</th>
+		</tr>
+    </thead>
+    <tbody>
+		<notempty name="list_data">
+		<volist name="list_data" id="vo">
+		<tr>
+			<td>{$vo.id} </td>
+			<td>
+				<notempty name="vo.wxheadimg">
+					<img width="32" src="{$vo.wxheadimg}" alt="用户头像" />
+				<else />
+					<img width="32" class="user_pic" src="/Public/Home/images/user_img.jpg" alt="用户头像" />
+				</notempty>
+			</td>
+			<td>{$vo.nickname}</td>
+			<td><span>{$vo.mobile}</span></td>
+			<td><span>{$vo.reg_time|time_format}</span></td>
+			<td><span>{$vo.last_login_time|time_format}</span></td>
+			<td><span>{$vo.referfrom}</span></td>
+			<td><span>{$vo.referval}</span></td>
+			<td><span>{$vo.status|get_status_title}</span></td>
+		</tr>
+		</volist>
+		<else/>
+		<td colspan="8" class="text-center"> aOh! 暂时还没有内容! </td>
+		</notempty>
+	</tbody>
+    </table>
+        </div>
+    </div>
+    <div class="page">
+        {$_page}
+    </div>
+</block>
+
+<block name="script">
+<script src="__STATIC__/thinkbox/jquery.thinkbox.js"></script>
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript">
+  	//导航高亮
+//highlight_subnav('{:U('Model/index')}');
+$(function(){
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+        var query  = $('.search-form').find('input').serialize();
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+    });
+
+    $('#reg-start,#reg-end,#lastlogin-start,#lastlogin-end').datetimepicker({
+        format: 'yyyy-mm-dd',
+        language:"zh-CN",
+	    minView:2,
+	    autoclose:true
+    });
+})
+</script>
+</block>

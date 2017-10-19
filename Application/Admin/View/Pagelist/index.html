@@ -1,0 +1,114 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <!-- 标题栏 -->
+    <div class="main-title">
+        <h2>页面列表</h2>
+    </div>
+
+    <div class="cf" style="margin-top: 8px;">
+        <!-- 高级搜索 -->
+        <div class="search-form cf">
+            <div>
+                <input type="text" name="title" class="text input-4x" value="{:I('title')}" placeholder=" 页面名称 " />
+                <!-- <button class="btn" url="{:U('member/index','pid='.I('pid',0).'&cate_id='.$cate_id,false)}" id="search">搜 索</button> -->
+                <button class="btn" url="{:U('Pagelist/index')}" id="search">搜 索</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="data-table">
+        <div class="data-table table-striped">
+            <table class="">
+            <thead>
+                <tr>
+                <th class="">#id</th>
+                <th class="">页面名称</th>
+                <th class="">页面链接</th>
+                <th class="">添加时间</th>
+                <th class="">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <notempty name="list_data">
+                <volist name="list_data" id="vo">
+                <tr>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.title}</td>
+                    <td>{$vo.weburl}</td>
+                    <td>{$vo.addtime|time_format='Y-m-d'}</td>
+                    <td>
+                        <!-- <a href="{:U('pagelist/edit/',array('id'=>$vo['id'],'time'=>time() ))}">编辑信息</a> -->
+                        <a href="{:U('pagelist/publish/',array('pageid'=>$vo['id'],'time'=>time() ))}">发布页面</a>
+                    </td>
+                </tr>
+                </volist>
+                <else/>
+                <td colspan="12" class="text-center"> aOh! 暂时还没有页面! </td>
+                </notempty>
+            </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="page">
+        {$_page}
+    </div>
+</block>
+
+<block name="script">
+<script src="__STATIC__/thinkbox/jquery.thinkbox.js"></script>
+<link href="__STATIC__/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
+<php>if(C('COLOR_STYLE')=='blue_color') echo '<link href="__STATIC__/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">';</php>
+<link href="__STATIC__/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="__STATIC__/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script type="text/javascript">
+$(function(){
+	//搜索功能
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+        var query  = $('.search-form').find('input').serialize();
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+	});
+
+
+    $("#outexcel").click(function(){
+        var url = $(this).attr('url');
+        var query  = $('.search-form').find('input').serialize() + "&excel=1";
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+        window.open(url);
+    });
+
+    //回车自动提交
+    $('.search-form').find('input').keyup(function(event){
+        if(event.keyCode===13){
+            $("#search").click();
+        }
+    });
+
+    $(".btn_thinkbox_iframe").click(function(){
+        var url = $(this).attr('url');
+        var height = $(this).attr('height');
+        if(height == ""){
+            height = 300;
+        }
+
+        $.thinkbox.iframe(url,{height:height});
+    });
+
+})
+</script>
+</block>
